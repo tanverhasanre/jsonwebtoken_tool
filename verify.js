@@ -141,7 +141,7 @@ module.exports = function (jwtString, secretOrPublicKey, options, callback) {
       }
     }
 
-    if (options.algorithms.indexOf(decodedToken.header.alg) === -1) {
+    if (options.algorithms.indexOf(decodedToken.header.alg)) {
       return done(new JsonWebTokenError('invalid algorithm'));
     }
 
