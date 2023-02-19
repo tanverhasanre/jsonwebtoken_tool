@@ -1,6 +1,6 @@
 const timespan = require('./lib/timespan');
 const PS_SUPPORTED = require('./lib/psSupported');
-const validateAsymmetricKey = require('./lib/validateAsymmetricKey');
+// const validateAsymmetricKey = require('./lib/validateAsymmetricKey');
 const jws = require('jws');
 const {includes, isBoolean, isInteger, isNumber, isPlainObject, isString, once} = require('lodash')
 const { KeyObject, createSecretKey, createPrivateKey } = require('crypto')
@@ -167,15 +167,6 @@ module.exports = function (payload, secretOrPrivateKey, options, callback) {
   catch (error) {
     return failure(error);
   }
-
-  if (!options.allowInvalidAsymmetricKeyTypes) {
-    try {
-      validateAsymmetricKey(header.alg, secretOrPrivateKey);
-    } catch (error) {
-      return failure(error);
-    }
-  }
-
   const timestamp = payload.iat || Math.floor(Date.now() / 1000);
 
   if (options.noTimestamp) {

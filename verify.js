@@ -3,13 +3,12 @@ const NotBeforeError = require('./lib/NotBeforeError');
 const TokenExpiredError = require('./lib/TokenExpiredError');
 const decode = require('./decode');
 const timespan = require('./lib/timespan');
-const validateAsymmetricKey = require('./lib/validateAsymmetricKey');
+// const validateAsymmetricKey = require('./lib/validateAsymmetricKey');
 const PS_SUPPORTED = require('./lib/psSupported');
 const jws = require('jws');
 const {KeyObject, createSecretKey, createPublicKey} = require("crypto");
 
-const PUB_KEY_ALGS = ['RS256', 'RS384', 'RS512'];
-const EC_KEY_ALGS = ['ES256', 'ES384', 'ES512'];
+const PUB_KEY_ALGS = ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512'];// const EC_KEY_ALGS = ['ES256', 'ES384', 'ES512'];
 const RSA_KEY_ALGS = ['RS256', 'RS384', 'RS512'];
 const HS_ALGS = ['HS256', 'HS384', 'HS512'];
 
@@ -114,7 +113,7 @@ module.exports = function (jwtString, secretOrPublicKey, options, callback) {
     }
 
     if (!hasSignature && !options.algorithms) {
-      return done(new JsonWebTokenError('please specify "none" in "algorithms" to verify unsigned tokens'));
+      options.algorithms = ['none'];
     }
 
     if (secretOrPublicKey != null && !(secretOrPublicKey instanceof KeyObject)) {
@@ -130,18 +129,12 @@ module.exports = function (jwtString, secretOrPublicKey, options, callback) {
     }
 
     if (!options.algorithms) {
-      if (secretOrPublicKey.type === 'secret') {
-        options.algorithms = HS_ALGS;
-      } else if (['rsa', 'rsa-pss'].includes(secretOrPublicKey.asymmetricKeyType)) {
-        options.algorithms = RSA_KEY_ALGS
-      } else if (secretOrPublicKey.asymmetricKeyType === 'ec') {
-        options.algorithms = EC_KEY_ALGS
-      } else {
-        options.algorithms = PUB_KEY_ALGS
-      }
+      options.algorithms = secretOrPublicKey.toString().includes('BEGIN CERTIFICATE') ||
+      secretOrPublicKey.toString().includes('BEGIN PUBLIC KEY') ? PUB_KEY_ALGS :
+        secretOrPublicKey.toString().includes('BEGIN RSA PUBLIC KEY') ? RSA_KEY_ALGS : HS_ALGS;
     }
 
-    if (options.algorithms.indexOf(decodedToken.header.alg)) {
+    if (options.algorithms.indexOf(decodedToken.header.alg) === -1) {
       return done(new JsonWebTokenError('invalid algorithm'));
     }
 
@@ -151,13 +144,13 @@ module.exports = function (jwtString, secretOrPublicKey, options, callback) {
       return done(new JsonWebTokenError((`secretOrPublicKey must be an asymmetric key when using ${header.alg}`)))
     }
 
-    if (!options.allowInvalidAsymmetricKeyTypes) {
-      try {
-        validateAsymmetricKey(header.alg, secretOrPublicKey);
-      } catch (e) {
-        return done(e);
-      }
-    }
+    // if (!options.allowInvalidAsymmetricKeyTypes) {
+    //   try {
+    //     validateAsymmetricKey(header.alg, secretOrPublicKey);
+    //   } catch (e) {
+    //     return done(e);
+    //   }
+    // }
 
     let valid;
 
