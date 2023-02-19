@@ -17,7 +17,7 @@ describe("verify", () => {
   it("should first assume JSON claim set", function (done) {
     var header = { alg: "HS256" };
     var payload = { iat: Math.floor(Date.now() / 1000) };
-    var signed = jws.sign({
+    var signed = jwt.sign({
       header: header,
       payload: payload,
       secret: 'secret',
