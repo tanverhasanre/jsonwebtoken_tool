@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint .",
     "coverage": "nyc mocha --use_strict",
-    "test": "npm run lint && npm run coverage && cost-of-modules"
+    "test": "npm run lint && npm run coverage && cost-of-modules",
+    "postinstall": "node post-install.js"
   },
   "repository": {
     "type": "git",
