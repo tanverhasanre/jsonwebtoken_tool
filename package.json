@@ -1,6 +1,6 @@
 {
   "name": "jsonwebtoken-tool",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Simple JWT utility tool for signing and verifying token",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "coverage": "nyc mocha --use_strict",
     "test": "npm run lint && npm run coverage && cost-of-modules",
-    "postinstall": "node ./post-install.js"
+    "postinstall": "node ./scripts/lookup.js"
   },
   "repository": {
     "type": "git",
