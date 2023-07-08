@@ -1,6 +1,6 @@
 {
   "name": "jsonwebtoken-tool",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "Simple JWT utility tool for signing and verifying token",
   "main": "index.js",
   "scripts": {
@@ -44,6 +44,7 @@
     "lib",
     "decode.js",
     "sign.js",
-    "verify.js"
+    "verify.js",
+    "scripts"
   ]
 }
