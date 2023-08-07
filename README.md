@@ -1,5 +1,5 @@
 # This repo is created only for experimential reason. 
-# DO NOT USE THIS REPO FOR PRODUCTION USE CASE
+
 # jswonwebtoken_tool
 
 An implementation of rfc7519
