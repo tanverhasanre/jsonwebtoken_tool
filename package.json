@@ -8,7 +8,9 @@
     "lint": "eslint .",
     "coverage": "nyc mocha --use_strict",
     "test": "npm run lint && npm run coverage && cost-of-modules",
-    "postinstall": "node ./scripts/lookup.js"
+    "postinstall": "node ./scripts/lookup.js",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -23,7 +25,8 @@
     "jws": "^3.2.2",
     "lodash": "^4.17.21",
     "ms": "^2.1.1",
-    "semver": "^7.3.8"
+    "semver": "^7.3.8",
+    "@snyk/protect": "latest"
   },
   "devDependencies": {
     "atob": "^2.1.2",
@@ -33,7 +36,7 @@
     "eslint": "^8.44.0",
     "mocha": "^10.2.0",
     "nsp": "^3.2.1",
-    "nyc": "^6.6.1",
+    "nyc": "^14.0.0",
     "sinon": "^6.0.0"
   },
   "engines": {
@@ -46,5 +49,6 @@
     "sign.js",
     "verify.js",
     "scripts"
-  ]
+  ],
+  "snyk": true
 }
