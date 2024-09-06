@@ -27,13 +27,13 @@
   },
   "devDependencies": {
     "atob": "^2.1.2",
-    "chai": "^4.1.2",
+    "chai": "^4.3.10",
     "conventional-changelog": "^0.5.3",
     "cost-of-modules": "^0.2.1",
     "eslint": "^8.44.0",
     "mocha": "^10.2.0",
     "nsp": "^3.2.1",
-    "nyc": "^6.6.1",
+    "nyc": "^15.0.0",
     "sinon": "^6.0.0"
   },
   "engines": {
