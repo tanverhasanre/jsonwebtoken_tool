@@ -20,7 +20,7 @@
   "author": "Tanver Hasan",
   "license": "ISC",
   "dependencies": {
-    "jws": "^3.2.2",
+    "jws": "^3.2.3",
     "lodash": "^4.17.21",
     "ms": "^2.1.1",
     "semver": "^7.3.8"
